@@ -106,7 +106,7 @@ async def handle_url(message: Message) -> None:
         await status_msg.edit_text(f"📦 {exc}")
     except DownloadError as exc:
         logger.warning("Download error", extra={"error": str(exc), "user_id": user_id})
-        await status_msg.edit_text(f"❌ Download failed: {exc}")
+        await status_msg.edit_text("❌ Download failed. Please try another link.")
     except AudioProcessingError as exc:
         logger.error("Audio processing error", extra={"error": str(exc), "user_id": user_id})
         await status_msg.edit_text("⚙️ Audio processing failed. Please try again later.")

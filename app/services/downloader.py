@@ -55,6 +55,8 @@ async def download_audio(
         "--no-progress",
         "--quiet",
         source_url,
+        "--extractor-args", "youtube:player_client=web",
+        "--no-check-certificates",
     ]
 
     logger.info("Starting yt-dlp download", extra={"url": source_url[:80]})
