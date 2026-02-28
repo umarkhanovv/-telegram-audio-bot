@@ -1,0 +1,20 @@
+version: "3.9"
+
+services:
+  bot:
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - audio_cache:/tmp/audio_cache
+    environment:
+      - ENV=production
+      - CACHE_DIR=/tmp/audio_cache
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  audio_cache:
