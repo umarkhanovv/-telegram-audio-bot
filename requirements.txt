@@ -1,20 +1,12 @@
-# Core
-aiogram==3.13.1
-aiohttp==3.9.5
-pydantic==2.9.2
-pydantic-settings==2.6.1
-
-# Audio / download
-yt-dlp==2024.11.18
-
-# Logging
-json-log-formatter==1.0
-
-# AWS S3 (optional cache backend)
-aiobotocore==2.15.1; extra == "s3"
-boto3==1.35.36; extra == "s3"
-
-# Dev / test
-pytest==8.3.3
-pytest-asyncio==0.24.0
-pytest-mock==3.14.0
+fastapi==0.111.0
+uvicorn[standard]==0.29.0
+flask==3.0.3
+requests==2.32.3
+transformers==4.41.2
+torch>=2.0.0
+huggingface-hub==0.23.2
+cachetools==5.3.3
+psutil==5.9.8
+jinja2==3.1.4
+werkzeug==3.0.3
+certifi

@@ -7,8 +7,7 @@ Shared async HTTP client with:
 """
 import asyncio
 import logging
-from contextlib import asynccontextmanager
-from typing import Any, AsyncGenerator, Optional
+from typing import Any, Optional
 
 import aiohttp
 from aiohttp import ClientSession, TCPConnector
@@ -31,14 +30,8 @@ class SSRFAttemptError(Exception):
     pass
 
 
-class _NoPrivateRedirectResolver(aiohttp.resolver.AsyncResolver):
-    """Intercept DNS to block private-range IPs post-redirect."""
-    pass  # Future: override resolve() to check resolved IPs
-
-
 async def _check_redirect(session, ctx, params):
     """Hook: validate redirect URL is not private."""
-    url = str(params.url)
     host = params.url.host or ""
     if _PRIVATE_HOST_RE.match(host):
         raise SSRFAttemptError(f"Redirect to private host blocked: {host}")
@@ -53,8 +46,6 @@ def build_session() -> ClientSession:
     return ClientSession(
         connector=connector,
         timeout=timeout,
-        max_line_size=8190,
-        max_field_size=8190,
         trust_env=False,
         trace_configs=[_build_trace_config()],
     )

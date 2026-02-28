@@ -35,10 +35,6 @@ async def download_audio(
     output_path: Path,
     metadata: Optional[TrackMetadata] = None,
 ) -> Path:
-    """
-    Download best-quality audio from source_url using yt-dlp.
-    Returns path to the downloaded raw audio file (pre-ffmpeg).
-    """
     _check_ytdlp()
 
     raw_output = output_path.with_suffix(".%(ext)s")
@@ -54,9 +50,9 @@ async def download_audio(
         "--output", str(raw_output),
         "--no-progress",
         "--quiet",
+        "--extractor-args", "youtube:player_client=ios,web",
+        "--add-header", "User-Agent:Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15",
         source_url,
-        "--extractor-args", "youtube:player_client=web",
-        "--no-check-certificates",
     ]
 
     logger.info("Starting yt-dlp download", extra={"url": source_url[:80]})
@@ -78,7 +74,6 @@ async def download_audio(
         err = stderr.decode(errors="replace")
         _raise_from_ytdlp_error(err)
 
-    # Find the actual downloaded file (yt-dlp fills in extension)
     stem = output_path.stem
     candidates = list(output_path.parent.glob(f"{stem}.*"))
     if not candidates:
@@ -95,6 +90,8 @@ async def search_youtube_for_track(metadata: TrackMetadata) -> str:
         "--print", "webpage_url",
         "--no-playlist",
         "--quiet",
+        "--no-check-certificates",
+        "--extractor-args", "youtube:player_client=ios,web",
         query,
     ]
     try:
@@ -120,13 +117,13 @@ async def search_youtube_for_track(metadata: TrackMetadata) -> str:
 
 def _raise_from_ytdlp_error(stderr: str) -> None:
     lower = stderr.lower()
-    if "private video" in lower or "private" in lower:
+    if "private video" in lower:
         raise PrivateVideoError("This video is private and cannot be downloaded")
     if "geo" in lower or "not available in your country" in lower:
-        raise GeoBlockedError("This content is geo-blocked in the server's region")
-    if "too large" in lower or "file is too large" in lower:
+        raise GeoBlockedError("This content is geo-blocked in the server region")
+    if "too large" in lower:
         raise FileTooLargeError("Source file is too large")
-    raise DownloadError(f"yt-dlp error: {stderr[:300]}")
+    raise DownloadError("Could not download this track. Please try another link.")
 
 
 def _check_ytdlp() -> None:
