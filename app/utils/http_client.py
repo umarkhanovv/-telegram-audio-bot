@@ -48,7 +48,6 @@ def build_session() -> ClientSession:
     connector = TCPConnector(
         limit=20,
         ssl=True,
-        resolver=aiohttp.resolver.AsyncResolver(),
     )
     timeout = aiohttp.ClientTimeout(total=settings.HTTP_TIMEOUT_SECONDS)
     return ClientSession(
