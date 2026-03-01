@@ -56,7 +56,7 @@ async def download_audio(
         logger.warning("Cobalt failed, trying yt-dlp", extra={"error": str(exc)})
 
     # Fall back to yt-dlp
-    return await _download_via_ytdlp(source_url, output_path)
+    return await _download_via_ytdlp("--cookies", "/app/cookies.txt",source_url, output_path)
 
 
 async def _download_via_cobalt(source_url: str, output_path: Path) -> Optional[Path]:
